@@ -85,7 +85,7 @@ public final class CineFlyClient implements ClientModInitializer {
 
         float playerYaw = client.player.getYaw();
         double yawRadians = Math.toRadians(playerYaw);
-        Vec3d playerPos = client.player.getPos();
+        Vec3d playerPos = client.player.getEntityPos();
         targetPosition = new Vec3d(
                 playerPos.x + Math.sin(yawRadians) * START_DISTANCE,
                 playerPos.y + START_HEIGHT,
