@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,7 @@ public final class CineFlyClient implements ClientModInitializer {
     private static KeyBinding toggleKey;
     private static boolean active;
     private static boolean previousHudHidden;
+    private static Perspective previousPerspective;
     private static Entity previousCamera;
     private static ArmorStandEntity cameraAnchor;
     private static Vec3d cameraPosition = Vec3d.ZERO;
@@ -76,6 +78,7 @@ public final class CineFlyClient implements ClientModInitializer {
 
         previousCamera = client.getCameraEntity();
         previousHudHidden = client.options.hudHidden;
+        previousPerspective = client.options.getPerspective();
         ClientWorld world = client.world;
         cameraAnchor = new ArmorStandEntity(EntityType.ARMOR_STAND, world);
 
@@ -99,6 +102,8 @@ public final class CineFlyClient implements ClientModInitializer {
         cameraAnchor.setHeadYaw(cameraYaw);
 
         active = true;
+        // Prevent Minecraft from applying a second third-person camera offset.
+        client.options.setPerspective(Perspective.FIRST_PERSON);
         client.options.hudHidden = true;
         client.setCameraEntity(cameraAnchor);
     }
@@ -107,11 +112,13 @@ public final class CineFlyClient implements ClientModInitializer {
         active = false;
         if (client != null) {
             client.options.hudHidden = previousHudHidden;
+            if (previousPerspective != null) client.options.setPerspective(previousPerspective);
             Entity restore = client.player != null ? client.player : previousCamera;
             if (restore != null) client.setCameraEntity(restore);
         }
         cameraAnchor = null;
         previousCamera = null;
+        previousPerspective = null;
     }
 
     private static void updateTargetFromInput(MinecraftClient client) {
