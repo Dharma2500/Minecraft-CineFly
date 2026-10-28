@@ -11,6 +11,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
@@ -43,7 +44,7 @@ public final class CineFlyClient implements ClientModInitializer {
                 "key.cinefly.toggle",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_O,
-                "category.cinefly"
+                KeyBinding.Category.create(Identifier.of("cinefly", "general"))
         ));
         ClientTickEvents.END_CLIENT_TICK.register(CineFlyClient::tick);
     }
