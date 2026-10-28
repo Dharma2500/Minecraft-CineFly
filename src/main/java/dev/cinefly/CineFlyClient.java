@@ -90,10 +90,12 @@ public final class CineFlyClient implements ClientModInitializer {
                 playerPos.y + START_HEIGHT,
                 playerPos.z - Math.cos(yawRadians) * START_DISTANCE
         );
-        cameraPosition = targetPosition;
+        // Start at the player's current eye position, then ease into the cinematic
+        // framing instead of snapping the camera to its offset in one frame.
+        cameraPosition = playerPos.add(0.0, client.player.getStandingEyeHeight(), 0.0);
         cameraYaw = playerYaw;
         targetYaw = playerYaw;
-        cameraPitch = START_PITCH;
+        cameraPitch = client.player.getPitch();
         targetPitch = START_PITCH;
 
         cameraAnchor.setPosition(cameraPosition.x, cameraPosition.y - cameraAnchor.getStandingEyeHeight(), cameraPosition.z);
@@ -148,11 +150,9 @@ public final class CineFlyClient implements ClientModInitializer {
     /** Applies Minecraft's mouse-look deltas to the independent camera. */
     public static void rotateCamera(double deltaX, double deltaY) {
         if (!active) return;
-        double sensitivity = MinecraftClient.getInstance().options.getMouseSensitivity().getValue();
-        double scale = sensitivity * 0.6 + 0.2;
-        scale = scale * scale * scale * 8.0;
-        targetYaw += (float) (deltaX * scale * 0.15);
-        targetPitch += (float) (deltaY * scale * 0.15);
+        // Mouse.updateMouse has already applied the user's sensitivity setting.
+        targetYaw += (float) (deltaX * 0.15);
+        targetPitch += (float) (deltaY * 0.15);
         targetPitch = MathHelper.clamp(targetPitch, -89.0f, 89.0f);
     }
 
