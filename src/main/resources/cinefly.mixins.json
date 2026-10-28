@@ -3,7 +3,8 @@
   "package": "dev.cinefly.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "MouseMixin"
+    "MouseMixin",
+    "KeyboardInputMixin"
   ],
   "injectors": {
     "defaultRequire": 1
